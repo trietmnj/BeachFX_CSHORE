@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+%% \usepackage{epsfig}
+%% \usepackage{color}  
+%% \usepackage{oldlfont}
+%\usepackage[scanall]{psfrag}
+%% \usepackage{graphics}
+%% \usepackage{amssymb}
+%% \usepackage{amsmath}
+\usepackage{hyperref}
+\addtolength{\topmargin}{-1cm}
+\addtolength{\textheight}{2cm}
+\addtolength{\textwidth}{4cm}
+\addtolength{\oddsidemargin}{-2cm}
+\begin{document}
+
+
+\subsection*{Introduction}
+The Beach-fx modeling system requires application of a
+one-dimensional coastal morphology change model that is suitably
+accurate for predicting beach profile change under storm attack.  The
+original framework made use of the SBEACH model, an empirical
+representation of morphodynamics introduced in Larson and Kraus (1989).
+The option to use the CSHORE model was outlined in Johnson and
+Sanderson (2020) and the scripting code is provided \\
+\href{https://github.com/erdc/BeachFX_CSHORE_link}{https://github.com/erdc/BeachFX\_CSHORE\_link}\\
+Both models require comparable bottom position initial conditions with
+wave and water level seaward boundary data.  In addition to profile
+response, SBEACH and CSHORE also provide hydrodynamic and wave 
+estimates required by the Beach-fx model.  While the models are
+generally interchangeable, they are contrasting in foundational
+principles and associated limiting assumptions.  A short review of the
+operational model differences is provided herein to assist in rational
+model choice.
+
+
+
+\subsection*{Model Formulation} 
+
+Both SBEACH and CSHORE operate under the assumption of longshore
+uniformity, and wave and current estimates derive from the numerical
+integration of the depth-averaged energy, momentum, and continuity
+equations.
+
+The predictions of sediment transport and associated morphology change
+are fundamentally different, however.  The SBEACH model pre-determines
+an empirically-based equilibrium profile on the basis of sediment, wave and
+water level conditions.  The rate of bottom position evolution,
+approaching the prescribed steady-state, is based on the degree of
+departure from equilibrium and the hydrodynamic forcing.  With a basis
+in prescribed steady profiles, The SBEACH model lacks foundational rigor
+but is inherently robust and stable.
+
+
+The CSHORE model, conversely, posits process-based sediment transport
+algorithms for a nearshore breaking wave environment. The model
+provides distinct estimates for bedload, suspended load, and
+wave-related sediment transport.  Generally speaking, when applied in
+an appropriate manner, the CSHORE model provides more accurate results
+[e.g. Johnson etal 2012].  The underlying assumptions for the CSHORE
+model are, however, more restrictive, and predictions resulting from
+conditions in violation will likely be in gross error.  A partial
+accounting of model assumptions to be regarded is:
+\begin{itemize}
+\item
+  Sediment grain size varies in the range $.1 mm <d_{50}<1 mm$,
+\item
+  Minimal bed position change at the seaward boundary, equivalent to
+  having a seaward boundary sufficiently deep to avoid breaking,
+\item
+  Dune overtopping is limited to intermittent wave overtopping.  This
+  precludes having conditions where the seaward boundary water level
+  is higher than the maximum profile position.
+\item 
+ Slopes are limited to the sediment angle of repose.  This precludes
+ the use of vertical walls, which are not currently supported within
+ CSHORE.
+\end{itemize}
+
+\subsection*{Model Operation} 
+
+At present, the SBEACH workflow is designed to execute on a Windows
+platform in serial.  It is common practice to manually subdivide a
+long series of Monte Carlo simulations and perform the morphology
+computations on separate individual computers and manually recombine
+the results at completion.  In contrast, the CSHORE/BEACHFX
+implementation is scripted for rudimentary parallel execution, where
+an arbitrary number of discreet processors or cores can be used
+simultaneously on a desktop computer or HPC resources.  While the HPC
+platform can pose challenges, the parallel system affords considerable
+efficiency.
+
+
+\subsection*{References} 
+
+\noindent Johnson, B.D. Sanderson, D.R. (2020) {\it On the Use of CSHORE for
+  Beach-fx}, US Army Corps of Engineers Technical Note CHETN-II-59\\[1mm]
+
+\noindent Johnson, B.D., Kobayashi, N., and Gravens, M.B. (2012) {\it
+  Cross-Shore Numerical Model CSHORE for Waves, Currents, Sediment
+  Transport and Beach Profile Evolution}, US Army Corps of Engineers
+Technical Report TR-12-22.\\[1mm]
+
+\noindent Larson, M., Kraus, N.C. (1989) {\it SBEACH : numerical model for
+  simulating storm-induced beach change. Report 1, Empirical
+  foundation and model development} US Army Corps of Engineers
+Technical Report; CERC-89-9 Report 1
+
+
+
+\end{document}
