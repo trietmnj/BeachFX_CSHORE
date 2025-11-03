@@ -2,7 +2,9 @@ function make_infiles(tides,reaches,storms,cshore)
 
 in.iline  = 1;          % 1 = single line
 in.iprofl = 1.1;          % 0 = no morph, 1 = run morph
-in.isedav = 0;          % 0 = unlimited sand, 1 = hard bottom
+
+%in.isedav = 0;          % 0 = unlimited sand, 1 = hard bottom
+
 in.iperm  = 0;          % 0 = no permeability, 1 = permeable
 in.iover  = 1;          % 0 = no overtopping , 1 = include overtopping
 in.infilt = 0;          % 1 = include infiltration landward of dune crest
@@ -37,11 +39,18 @@ end
 
 
 for i = 1:length(reaches)
+  
   % first make a directory for each reach
   in.dirname=reaches(i).dirname;
   [success,message,messageid] = mkdir(['./work/infiles/',in.dirname]);
   in.d50 = cshore.d50{i};    % d_50 in mm  
   in.wf = vfall(in.d50,20,0); % fall velocity
+  if isfield(reaches(i).profile,'z_hb_ft')
+    in.isedav = 1;
+  else
+    in.isedav = 0;
+  end
+  
   for j = 1:length(reaches(i).height_dune)
     for k = 1:length(storms)
       for l = 1:length(tides.phases)
@@ -77,8 +86,17 @@ for i = 1:length(reaches)
           in.x = min(x):in.dx:max(x);
           [j1 j2] = unique(x); 
           in.zb = interp1(x(j2),zb(j2),in.x);
-          in.fw = in.fric_fac*ones(size(in.zb)); % cross-shore values of bot fric
+          % to avoid severe overwash, include the next line
+          in.zb(end) = in.zb(end)+5;
+          if in.isedav
+            zb_p = 0.3048*reaches(i).profile(j).z_hb_ft; % zb points
+            in.x_p = in.x;
+            in.zb_p = interp1(x(j2),zb_p(j2),in.x);
+            in.iclay = 0;
+          end
 
+          in.fw = in.fric_fac*ones(size(in.zb)); % cross-shore values of bot fric
+                                                 
           makeinfile_bfx(in);
           
         end

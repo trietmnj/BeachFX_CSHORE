@@ -54,6 +54,20 @@ tides.phases = [1 3]; % 1=max,2=falling,3=min,4=rising
     Reach2_submerged_profile.txt, etc and put them in the work
     directory.
 
+   -Optionally including the impact of hardbottom within a domain is
+    initiated through the presence of a file following the submerged
+    profile convention but substituting 'hardbottom' in for
+    'submerged'. The file data should be in two columns: x z_hb in
+    units of feet where x is the same cross-shore coordinate used in
+    the submerged profile data file, and z_hb is vertical location of
+    the hardbottom.  As an example, if hardbottom is to be included in
+    Reach 1, create Reach1_hardbottom_profile.txt where the x column is
+    identical to the first column of Reach1_submerged_profile.txt.  If
+    hardbottom data throughout the profile are unavailable, populate
+    the z_hb vector with a value sufficiently far below the bottom
+    position, z, values that they don't enter into the active
+    computation.
+
 
 2) Make storms
 

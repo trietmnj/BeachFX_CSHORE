@@ -6,11 +6,14 @@ addpath 'mfiles'
 iclean = 1; % iclean = 1 to remove all existing results in infile directory   
 if iclean ;[j1,j1,j1]=rmdir('./work/infiles','s');clear j1 iclean;end
 
+%local script to prepare reach submerged profiles and hardbottom
+make_submerged_profile_and_hardbottom
+
 %START user inputs
 inp.names       = {'Reach1' 'Reach3'}; 
 inp.height_dune = {{10 12} num2cell(9.9:.02:10.5)}; %[ft]
-inp.height_dune = {{10 12} {9.9 10.5}}; %[ft]
-inp.height_dune = {{10.0} {9.9}}; %[ft]
+inp.height_dune = {{10 11 12} {9.9 10.5}}; %[ft]
+%inp.height_dune = {{10 } {9.9}}; %[ft]
 inp.width_dune  = {10 {12 13}}; %[ft]
 inp.width_berm  = {{100 150} 120}; %[ft]
 inp.width_upland  = {200 220}; %[ft]
@@ -31,7 +34,7 @@ reaches=find_all_combos(inp);
 reaches = make_profiles(reaches);
 storms = make_storms(tides);
 make_infiles(tides,reaches,storms,cshore);
-tar('to_hpc.tgz',{'./work/infiles' 'executables' 'pyfiles' ...
-                  'run_all_infiles_hpc' 'submit_script_onyx.pbs'...
-                 'make_reach_dat_file.py'});
+% tar('to_hpc.tgz',{'./work/infiles' 'executables' 'pyfiles' ...
+%                   'run_all_infiles_hpc' 'submit_script_onyx.pbs'...
+%                  'make_reach_dat_file.py'});
 

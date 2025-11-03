@@ -11,39 +11,64 @@ else
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%a
-params.iveg = 0;
-params.isedav=0;
+% params.iveg = 0;
+% params.isedav=0;
+
+% fid=fopen([fname,'OBPROF']);
+% cnt=0;
+% while 1
+%   tline = fgetl(fid);
+%   if ~ischar(tline), break, end
+%   cnt = cnt+1;
+%   tline = str2num(tline);
+%   if length(tline)==3;
+%     N = tline(2);
+%     tme = tline(3);
+%   elseif length(tline)==2;
+%     N = tline(1);
+%     tme=tline(2);
+%   end
+%   if (params.iveg&cnt>1)&params.isedav==0
+%     [tot]=fscanf(fid,'%f %f %f\n',[3,N])';
+%     morpho(cnt).ivegitated = tot(:,3);
+%   elseif params.isedav==1
+%     [tot]=fscanf(fid,'%f %f %f\n',[3,N])';
+%     morpho(cnt).zb_p = tot(:,3);
+%   else
+%     [tot]=fscanf(fid,'%f %f \n',[2,N])';
+%   end
+%   morpho(cnt).time = tme;
+%   morpho(cnt).x = tot(:,1);
+%   morpho(cnt).zb = tot(:,2);
+% end
+% fclose(fid);
 
 fid=fopen([fname,'OBPROF']);
-cnt=0;
+cnt = 0;
 while 1
   tline = fgetl(fid);
   if ~ischar(tline), break, end
   cnt = cnt+1;
-  tline = str2num(tline);
-  if length(tline)==3;
-    N = tline(2);
-    tme = tline(3);
-  elseif length(tline)==2;
-    N = tline(1);
-    tme=tline(2);
+  tlinenum = str2num(tline);
+  tme = tlinenum(end);
+  N = tlinenum(end-1);
+  if cnt==1;
+    pos = ftell(fid);
+    tline = str2num(fgetl(fid));
+    Ncol = length(tline);
+    fseek(fid,pos,'bof');
   end
-  if (params.iveg&cnt>1)&params.isedav==0
-    [tot]=fscanf(fid,'%f %f %f\n',[3,N])';
-    morpho(cnt).ivegitated = tot(:,3);
-  elseif params.isedav==1
-    [tot]=fscanf(fid,'%f %f %f\n',[3,N])';
-    morpho(cnt).zb_p = tot(:,3);
-  else
-    [tot]=fscanf(fid,'%f %f \n',[2,N])';
-  end
+  dum = textscan(fid,repmat(' %f ',1,Ncol),N,'delimiter','\n');
   morpho(cnt).time = tme;
-  morpho(cnt).x = tot(:,1);
-  morpho(cnt).zb = tot(:,2);
+  morpho(1).x = dum{1};
+  morpho(cnt).zb = dum{2};
+  if Ncol==3;morpho(1).zb_p = dum{3};else;morpho(1).zb_p = NaN;end
 end
 fclose(fid);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fid=fopen([fname,'OSETUP']);
 %	  WRITE(22,1500) XB(J),(WSETUP(J)+SWLBC(IWAVE)),H(J),SIGMA(J)
 cnt=0;
@@ -74,6 +99,7 @@ out.notes = 'All units are m';
 dum = [morpho.zb];
 out.x = morpho(1).x;
 out.initial_profile = morpho(1).zb;
+out.hardbottom_profile = morpho(1).zb_p;
 out.final_profile = morpho(end).zb;
 out.max_profile_elev = [max(dum')]';
 out.min_profile_elev = [min(dum')]';

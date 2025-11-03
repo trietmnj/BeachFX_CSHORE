@@ -14,9 +14,6 @@ for i = 1:length(reaches)
   fclose(fid);
   x_sub  = tot{1};
   z_sub  = tot{2};
-
-  
-  
   
   for j = 1:length(reaches(i).height_dune)
     x = [0 reaches(i).width_upland(j)];
@@ -35,11 +32,23 @@ for i = 1:length(reaches)
 
     reaches(i).profile(j).x_ft = [x x_sub2'];
     reaches(i).profile(j).z_ft = [z z_sub'];
-    if 0
-      figure
-      plot(x_ft,z_ft);hold all
-      plot(x_sub2,z_sub)
+
+    %check for hardbottom
+    fn = ['./work/',reaches(i).dirname,'_hardbottom_profile.txt'];
+    fid=fopen(fn,'r') ;
+    if fid<0
+      disp(['No hardbottom file: ',fn])
+
+    else
+      disp(['Found hardbottom file: ',fn])
+      tot = textscan(fid,'%f%f');
+      fclose(fid);
+      x_p  = tot{1};zb_p  = tot{2};
+      %reaches(i).profile(j).z_hb_ft = [z-10 zb_p'];
+      reaches(i).profile(j).z_hb_ft = interp1([-1 x_p'+x(end)],[z(1)-10 zb_p'],reaches(i).profile(j).x_ft);
+    reaches(i).profile(j).z_ft = max(reaches(i).profile(j).z_ft,reaches(i).profile(j).z_hb_ft);
     end
+
   end
 
 end
