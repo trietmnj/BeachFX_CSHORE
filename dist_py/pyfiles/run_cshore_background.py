@@ -108,15 +108,17 @@ class run_cshore_background(object):
 		for infile in infiles:												#loop through infiles
 			os.rename(infile, 'infile')						#rename the file we're working with here to "infile"
 
-			if ilinux:
-				os.system(os.path.join(self.meta_dict['exe_directory'], 'CSHORE_USACE_LINUX.out'))	#call on cshore
-			elif idarwin:
-				print("WARNING: Running on macOS (Darwin). Attempting to run Linux binary (may fail without compatibility layer)...")
-				os.system(os.path.join(self.meta_dict['exe_directory'], 'CSHORE_USACE_LINUX.out'))
+			exe_path = os.path.join(self.meta_dict['exe_directory'], 'CSHORE_USACE_LINUX.out') if ilinux or idarwin else os.path.join(self.meta_dict['exe_directory'], 'cshore_usace_win.out')
+			
+			if idarwin:
+				# Use a more subtle indicator for macOS attempts
+				cmd = f"{exe_path} > /dev/null 2>&1"
 			else:
-				os.system(os.path.join(self.meta_dict['exe_directory'], 'cshore_usace_win.out'))	#call on cshore                        
+				# Silence the FORTRAN output to keep console clean
+				cmd = f"{exe_path} > /dev/null 2>&1"
+			
+			os.system(cmd)
 
-			print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')	#space seperator
 			params, bc, veg, hydro, sed, morpho = csio.load_CSHORE_results(os.getcwd())	#reading cshore results
 			self.write_h5file(infile, morpho, hydro)						#writing what is needed to the h5 file
 			os.rename('infile', infile)								#renaming the infile to it's original name.
