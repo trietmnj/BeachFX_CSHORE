@@ -10,7 +10,8 @@ from run_cshore_background import run_cshore_background				#loading background p
 rcb = run_cshore_background()
 
 meta_dict = {}														#setting up dictionaries
-meta_dict['work_directory'] = os.path.join(current_path, "work")
+root_path = os.path.abspath(os.path.join(current_path, ".."))
+meta_dict['work_directory'] = os.path.join(root_path, "data")
 meta_dict['infile_directory'] = os.path.join(meta_dict['work_directory'], 'infiles')
 meta_dict['outfile_directory'] = os.path.join(meta_dict['work_directory'], 'outfiles')
 meta_dict['exe_directory'] = os.path.join(current_path, "executables")

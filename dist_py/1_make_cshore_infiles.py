@@ -64,7 +64,8 @@ strms = CreateStorms()
 mkInfiles = MakeInfiles()
 
 meta_dict = {}
-meta_dict['work_directory'] = os.path.join(current_path, "work")	#setting up ../work directory
+root_path = os.path.abspath(os.path.join(current_path, ".."))
+meta_dict['work_directory'] = os.path.join(root_path, "data")	#setting up data directory
 
 for reach_num, reach in enumerate(profile_dict['names']):		#loop through reaches
 	profiles = PPS.init(meta_dict, profile_dict, reach_num, reach)	#populating profile parameter space for reach

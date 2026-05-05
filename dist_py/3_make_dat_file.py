@@ -11,7 +11,8 @@ from output_to_DAT_background import output_to_DAT_background		#importing backgr
 otdb = output_to_DAT_background()
 
 meta_dict = {}														#setting up dictionary with work and infile directories
-meta_dict['work_directory'] = os.path.join(current_path, "work")
+root_path = os.path.abspath(os.path.join(current_path, ".."))
+meta_dict['work_directory'] = os.path.join(root_path, "data")
 meta_dict['infile_directory'] = os.path.join(meta_dict['work_directory'], 'infiles')
 meta_dict['outfile_directory'] = os.path.join(meta_dict['work_directory'], 'outfiles')
 

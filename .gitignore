@@ -13,3 +13,8 @@ from_hpc.tgz.used
 outfiles
 work_*
 dng*
+
+# Data directory
+data/infiles/
+data/outfiles/
+*.h5
