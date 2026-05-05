@@ -1,4 +1,4 @@
-mport os
+import os
 import numpy as np
 import h5py
 import platform
@@ -40,16 +40,16 @@ class run_cshore_background(object):
 		fin_data = np.column_stack((np.array(morpho['x'][-1])/.3048, np.array(morpho['zb'][-1])/.3048))		#creating dataset and converting to feet. 
 		max_data, min_data = self.max_min_dictionary(morpho, 'zb')		#max and min value across all time steps at each spacing step. 
 		max_hydro, _ = self.max_min_dictionary(hydro, 'mwl')
-                max_wave, _ = self.max_min_dictionary(hydro, 'Hs')
-                #print(max_wave[0:690])
-                #exit()
+		max_wave, _ = self.max_min_dictionary(hydro, 'Hs')
+		#print(max_wave[0:690])
+		#exit()
 
 		max_data = max_data/.3048			#max profile elevation (ft.)
 		min_data = min_data/.3048			#min profile elevation (ft.)
 		max_hydro = max_hydro/.3048			#max storm surge elevation (ft.)
 		max_wave = max_wave/.3048			#max wave conditions (ft.)
 
- 		dset_init_profile = Profile_storm.create_dataset('Initial Profile', data = init_data)		#writing results to h5file
+		dset_init_profile = Profile_storm.create_dataset('Initial Profile', data = init_data)		#writing results to h5file
 		dset_fin_profile = Profile_storm.create_dataset('Final Profile', data = fin_data)
 		dset_max_profile = Profile_storm.create_dataset('Max Prof Elev', data = max_data)
 		dset_min_profile = Profile_storm.create_dataset('Min Prof Elev', data = min_data)
@@ -93,7 +93,9 @@ class run_cshore_background(object):
 
 	def run_cshore_win_serial(self, reach):
 		#first find the os
-		ilinux=platform.system()=='Linux'
+		sys_type = platform.system()
+		ilinux = sys_type == 'Linux'
+		idarwin = sys_type == 'Darwin'
 
 		#~~~ windows - serial ~~~
 		"""
@@ -108,6 +110,9 @@ class run_cshore_background(object):
 
 			if ilinux:
 				os.system(os.path.join(self.meta_dict['exe_directory'], 'CSHORE_USACE_LINUX.out'))	#call on cshore
+			elif idarwin:
+				print("WARNING: Running on macOS (Darwin). Attempting to run Linux binary (may fail without compatibility layer)...")
+				os.system(os.path.join(self.meta_dict['exe_directory'], 'CSHORE_USACE_LINUX.out'))
 			else:
 				os.system(os.path.join(self.meta_dict['exe_directory'], 'cshore_usace_win.out'))	#call on cshore                        
 

@@ -226,23 +226,23 @@ class cshoreIO(object):
 				fid.write('%11.2f%11.4f\n' %(in_dict['timebc_surg'][ii], BC_dict['swlbc'][ii]))
 
 
-                #interp zb to cshore grid to remain consistent with matlab scripting bdj 2019-12-05 
-                x = BC_dict['x']
-                x = np.arange(x[0], x[-1], cshore_dict['dx']).tolist()
-                zb = np.interp(x,BC_dict['x'],BC_dict['zb'])
-                # now writethe bottom position
-                #fid.write('%-8i                             ->NBINP \n' % len(BC_dict['x'])) superceded bdj 2019-12-05 
-                fid.write('%-8i                             ->NBINP \n' % len(x))
+			#interp zb to cshore grid to remain consistent with matlab scripting bdj 2019-12-05 
+			x = BC_dict['x']
+			x = np.arange(x[0], x[-1], cshore_dict['dx']).tolist()
+			zb = np.interp(x,BC_dict['x'],BC_dict['zb'])
+			# now writethe bottom position
+			#fid.write('%-8i                             ->NBINP \n' % len(BC_dict['x'])) superceded bdj 2019-12-05 
+			fid.write('%-8i                             ->NBINP \n' % len(x))
 
 		if in_dict['iperm'] == 1 or in_dict['isedav'] >= 1:
 			fid.write('%-8i                             ->NPINP \n' % len(BC_dict['x_p'])) # this parameter is not specified in Brad's run_model...  This will crash if these conditions are met
 		else:
 			pass
 
-                
-                #for ii in range(0, len(BC_dict['x'])):  superceded bdj 2019-12-05 
+
+		#for ii in range(0, len(BC_dict['x'])):  superceded bdj 2019-12-05 
 		#	fid.write('%11.4f%11.4f%11.4f\n' % (BC_dict['x'][ii], BC_dict['zb'][ii], in_dict['fw']))
-                for ii in range(0, len(x)):
+		for ii in range(0, len(x)):
 			fid.write('%11.4f%11.4f%11.4f\n' % (x[ii],zb[ii], in_dict['fw']))
 
 		if in_dict['iperm'] == 1 or in_dict['isedav'] >= 1:

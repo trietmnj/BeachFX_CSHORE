@@ -80,14 +80,3 @@ tot_num = sum([len(storms.keys()) * i for i in prof_in_reach])		#calc number of 
 print('\nWriting %s CSHORE infiles' %tot_num)				#print number of profile/storm combinations
 
 mkInfiles.init(meta_dict, cshore_dict, profiles, storms)		#making infiles for each profile/storm combination
-
-os.chdir(current_path)                                                  #making the hpc files  
-tar = tarfile.open("to_hpc.tgz", "w:gz", dereference=True)
-tar.add("run_all_infiles_hpc")
-tar.add("work/infiles")
-tar.add("executables")
-tar.add("submit_script_onyx.pbs")
-tar.add("../dist_mat/make_reach_dat_file.py","make_reach_dat_file.py")
-tar.add("../dist_mat/pyfiles/cshore_in_out.py","./pyfiles/cshore_in_out.py")
-tar.add("../dist_mat/pyfiles/__init__.py","./pyfiles/__init__.py")
-tar.close()
